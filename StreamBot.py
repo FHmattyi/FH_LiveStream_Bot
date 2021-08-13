@@ -13,7 +13,9 @@ import streamlink           #for checking if there's a live stream
 import urllib               #for opening a live stream
 import praw                 #for posting to reddit
 from time import time,sleep #for running code on a timer
+from datetime import datetime #for logging
 import config
+
 
 
 #Reddit bot's login info from config.py.  If you're a /r/funhaus mod, contact /u/Mattyi for the sub's streambot credentials.  If not, rename EXAMPLE_config.py to config.py and enter credentials for your own bot.
@@ -30,13 +32,15 @@ YTlink='https://www.youtube.com/channel/UCboMX_UNgaPBsUOIgasn3-Q/live'          
 #YTlink='https://www.youtube.com/channel/UCSJ4gkVC6NrvII8umztf0Ow/live'         #(test link using a stream that's nearly always on)             
 
 
-
 while True:
-    sleep(60-time() % 60)                                                           #wait 30 sec before executing
-    streams=streamlink.streams(YTlink)                                              #Grab any current streams using the url for the channel & '/live'.
+    sleep(30-time() % 30)                                                              #wait 30 sec before executing
+    streams=streamlink.streams(YTlink)                                                  #Grab any current streams using the url for the channel + '/live'.
     
     try:
-        stream=streams["best"]                                                          #grab stream with best quality. If there is no current FH stream, this will raise an exception and effectively restart the loop.  
+        stream=streams["best"]                                                          #grab stream with best quality. Throws error if no stream found.
+    except:
+        print(str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")) + ': Funhaus is not live.') 
+    else:
         weburl=urllib.request.urlopen(YTlink)                                           #Open the 'funhaus/live' url.
         data=str(weburl.read())                                                         #Grab the html response.  Inside here are the unique Broadcast url & title to use for our reddit post.
         BroadcastURL= data.split('="canonical" href="',1)[1].split('"',1)[0]            #parse html for the broadcast url.
@@ -57,13 +61,10 @@ while True:
             streamlist.write('\n' + BroadcastURL)
             streamlist.close()
 
-            print('Funhaus is LIVE!  A post has been created in the sub.')              
+            print(str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")) + ': Funhaus is LIVE!  A post has been created in the sub.')              
         else:
-            print ('Stream already posted.')
+            print (str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")) + ':Funhous is live, but stream has already been posted.')
 
-    except:
-        #pass
-        print('Funhaus is not live.')
 
 
     
