@@ -1,4 +1,4 @@
-#------------------
+ #------------------
 #StreamBotv1.py
 
 # This bot checks to see if the Youtube Funhaus Channel is currently livestreaming.  If it is, it scrapes Youtube for a unique url and video title, and then posts it to /r/Funhaus
@@ -33,7 +33,6 @@ YTlink='https://www.youtube.com/channel/UCboMX_UNgaPBsUOIgasn3-Q/live'          
 
 
 while True:
-    sleep(30-time() % 30)                                                              #wait 30 sec before executing
     streams=streamlink.streams(YTlink)                                                  #Grab any current streams using the url for the channel + '/live'.
     
     try:
@@ -65,6 +64,7 @@ while True:
         else:
             print (str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")) + ':Funhous is live, but stream has already been posted.')
 
+    sleep(180)                                                              #wait 3 min before executing
 
 
     
